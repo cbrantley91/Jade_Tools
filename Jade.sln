@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapView_WindowsGL", "MapVie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DialogueEditor", "DialogueEditor\DialogueEditor.csproj", "{7CE0E302-E3A5-4B30-AB78-E7F3F9AFF705}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapEditor_Windows", "MapEditor_Windows\MapEditor_Windows.csproj", "{7C36890F-FF52-44E3-A64C-2672AFEBBC14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,14 @@ Global
 		{7CE0E302-E3A5-4B30-AB78-E7F3F9AFF705}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7CE0E302-E3A5-4B30-AB78-E7F3F9AFF705}.Release|x86.ActiveCfg = Release|Any CPU
 		{7CE0E302-E3A5-4B30-AB78-E7F3F9AFF705}.Release|x86.Build.0 = Release|Any CPU
+		{7C36890F-FF52-44E3-A64C-2672AFEBBC14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C36890F-FF52-44E3-A64C-2672AFEBBC14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C36890F-FF52-44E3-A64C-2672AFEBBC14}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7C36890F-FF52-44E3-A64C-2672AFEBBC14}.Debug|x86.Build.0 = Debug|Any CPU
+		{7C36890F-FF52-44E3-A64C-2672AFEBBC14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C36890F-FF52-44E3-A64C-2672AFEBBC14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C36890F-FF52-44E3-A64C-2672AFEBBC14}.Release|x86.ActiveCfg = Release|Any CPU
+		{7C36890F-FF52-44E3-A64C-2672AFEBBC14}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
