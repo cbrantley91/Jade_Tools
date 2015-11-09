@@ -1,4 +1,7 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿// Initial workddone for XNA by Nick Gravelyn
+// More information : (http://blogs.msdn.com/b/nicgrave/archive/2010/07/25/rendering-with-xna-framework-4-0-inside-of-a-wpf-application.aspx)
+
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +11,17 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace WindowsMapView
+namespace Jade.MapEditor_Windows
 {
+    // TODO : move to different library
+
     /// <summary>
     /// A wrapper for a RenderTarget2D and WriteableBitmap 
     /// that handles taking the XNA rendering and moving it 
     /// into the WriteableBitmap which is consumed as the
     /// ImageSource for an Image control.
     /// </summary>
-    public class XnaImageSource : IDisposable
+    public class MonoGameImageSource : IDisposable
     {
         // the render target we draw to
         private RenderTarget2D renderTarget;
@@ -51,7 +56,7 @@ namespace WindowsMapView
         /// <param name="graphics">The GraphicsDevice to use.</param>
         /// <param name="width">The width of the image source.</param>
         /// <param name="height">The height of the image source.</param>
-        public XnaImageSource(GraphicsDevice graphics, int width, int height)
+        public MonoGameImageSource(GraphicsDevice graphics, int width, int height)
         {
             // create the render target and buffer to hold the data
             renderTarget = new RenderTarget2D(
@@ -64,7 +69,7 @@ namespace WindowsMapView
                 PixelFormats.Bgra32, null);
         }
 
-        ~XnaImageSource()
+        ~MonoGameImageSource()
         {
             Dispose(false);
         }

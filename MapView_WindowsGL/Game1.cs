@@ -59,7 +59,8 @@ namespace WindowsMapView
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
+             || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // TODO: Add your update logic here
@@ -73,11 +74,27 @@ namespace WindowsMapView
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.BlueViolet);
+            //GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+        protected void Draw(GameTime gameTime, GraphicsDevice device)
+        {
+            device.Clear(Color.BlueViolet);
+
+            // Change base?
+            //base.Draw(gameTime);
+        }
+
+        // TODO : remove
+        public void Draw(GraphicsDevice device)
+        {
+            GameTime time = new GameTime();
+            Draw(time, device);
         }
     }
 }
