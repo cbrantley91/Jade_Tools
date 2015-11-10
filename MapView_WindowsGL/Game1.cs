@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
-namespace WindowsMapView
+namespace Jade.MapView_WindowsGL
 {
     /// <summary>
     /// This is the main type for your game.
@@ -74,26 +75,71 @@ namespace WindowsMapView
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.BlueViolet);
-            //GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
-
-            base.Draw(gameTime);
+            Draw(gameTime, GraphicsDevice);
         }
 
         protected void Draw(GameTime gameTime, GraphicsDevice device)
         {
+            Vector2 start = new Vector2(10, 10);
+            Vector2 end = new Vector2(100, 100);
+
             device.Clear(Color.BlueViolet);
+
+            //StupidDrawLine(device, start, end);
+
+            // TODO : Determine what logging framework should be used for MonoGame
+            System.Console.WriteLine("Update : " + gameTime.TotalGameTime.ToString());
 
             // Change base?
             //base.Draw(gameTime);
+            base.Draw(gameTime);
         }
+
+        void StupidDrawLine(GraphicsDevice device, Vector2 start, Vector2 end)
+        {
+            int points = 2;
+
+            VertexPositionColor[] primitiveList = new VertexPositionColor[points];
+
+            primitiveList[0] = new VertexPositionColor(new Vector3(start, 0), Color.White);
+            primitiveList[1] = new VertexPositionColor(new Vector3(end, 0), Color.White);
+
+            Matrix viewMatrix = Matrix.CreateLookAt(
+                new Vector3(0.0f, 0.0f, 1.0f),
+                Vector3.Zero,
+                Vector3.Up
+                );
+
+            Matrix projectionMatrix = Matrix.CreateOrthographicOffCenter(
+                0,
+                (float)GraphicsDevice.Viewport.Width,
+                (float)GraphicsDevice.Viewport.Height,
+                0,
+                1.0f, 1000.0f);
+
+            short[] lineListIndices = new short[(points * 2) - 2];
+
+            for (int pt_ndx = 0; pt_ndx < points -1; pt_ndx++)
+            {
+                lineListIndices[pt_ndx * 2] = (short)(pt_ndx);
+                lineListIndices[(pt_ndx * 2) + 1] = (short)(pt_ndx + 1);
+            }
+
+            device.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.LineList,
+                primitiveList,
+                0,
+                2,
+                lineListIndices,
+                0,
+                1
+            );
+        }
+
+        private GameTime time = new GameTime();
 
         // TODO : remove
         public void Draw(GraphicsDevice device)
         {
-            GameTime time = new GameTime();
             Draw(time, device);
         }
     }

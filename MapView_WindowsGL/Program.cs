@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WindowsMapView
+namespace Jade.MapView_WindowsGL
 {
 #if WINDOWS || LINUX
     /// <summary>
