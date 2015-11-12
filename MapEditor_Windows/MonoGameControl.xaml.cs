@@ -28,7 +28,7 @@ namespace Jade.MapEditor_Windows
         private MonoGameImageSource imageSource;
 
         // TODO : remove game dependency; have DrawFunction be linked to external game
-        private Game1 game;
+        private TimeManagedGame game;
 
         /// <summary>
         /// Gets the GraphicsDevice behind the control.
@@ -47,7 +47,7 @@ namespace Jade.MapEditor_Windows
         {
             InitializeComponent();
 
-            game = new Game1();
+            game = new TimeManagedGame();
 
             // hook up an event to fire when the control has finished loading
             Loaded += new RoutedEventHandler(MonoGameControl_Loaded);

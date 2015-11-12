@@ -9,12 +9,12 @@ namespace Jade.MapView_WindowsGL
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : Game
+    public class TestGame : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        public Game1()
+        public TestGame()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -79,6 +79,7 @@ namespace Jade.MapView_WindowsGL
             Draw(gameTime, GraphicsDevice);
         }
 
+        // TODO : build as an extension
         protected void Draw(GameTime gameTime, GraphicsDevice device)
         {
             Vector2 start = new Vector2(10, 10);
@@ -136,31 +137,5 @@ namespace Jade.MapView_WindowsGL
             );
         }
 
-        // TODO : move to subclass
-        private Stopwatch stopwatch = new Stopwatch();
-        private long lastMillis;
-
-        private void Start() {
-            lastMillis = stopwatch.ElapsedMilliseconds;
-            stopwatch.Start();
-        }
-
-        private GameTime CalculateGameTime() {
-            stopwatch.Stop();
-            long currentTime = stopwatch.ElapsedMilliseconds;
-            stopwatch.Start();
-
-            GameTime gameTime = new GameTime(TimeSpan.FromMilliseconds(currentTime),
-                TimeSpan.FromMilliseconds(currentTime - lastMillis));
-            lastMillis = currentTime;
-
-            return gameTime;
-        }
-
-        // TODO : remove
-        public void Draw(GraphicsDevice device)
-        {
-            Draw(CalculateGameTime(), device);
-        }
     }
 }
