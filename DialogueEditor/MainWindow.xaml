@@ -5,8 +5,55 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DialogueEditor"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="DialogueEditor" Height="550" Width="875">
     <Grid>
-        
+
+        <TabControl x:Name="tabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TabItem Header="Dialogue Tree" Width="100">
+                <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Border DockPanel.Dock="Right" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0, -1.65, -2, -2">
+                        
+                        <StackPanel Background="LightGray" Width="200" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            
+                            
+                            <Expander Header="Dialogue Property">
+                                <StackPanel>
+                                    <TextBlock Height="20" Foreground="AliceBlue">Lorem ipsum dolor sit amet</TextBlock>
+                                    <TextBlock Height="20" Foreground="AliceBlue">Lorem ipsum dolor sit amet</TextBlock>
+                                    <TextBlock Height="20" Foreground="AliceBlue">Lorem ipsum dolor sit amet</TextBlock>
+                                </StackPanel>
+                            </Expander>
+
+
+                            <Expander Header="Script Property">
+                                <StackPanel>
+                                    <TextBlock Height="20" Foreground="AliceBlue">Lorem ipsum dolor sit amet</TextBlock>
+                                    <TextBlock Height="20" Foreground="AliceBlue">Lorem ipsum dolor sit amet</TextBlock>
+                                    <TextBlock Height="20" Foreground="AliceBlue">Lorem ipsum dolor sit amet</TextBlock>
+                                </StackPanel>
+                            </Expander>
+
+
+                            <Expander Header="Other Property">
+                                <StackPanel>
+                                    <TextBlock Height="20" Foreground="AliceBlue">Lorem ipsum dolor sit amet</TextBlock>
+                                    <TextBlock Height="20" Foreground="AliceBlue">Lorem ipsum dolor sit amet</TextBlock>
+                                    <TextBlock Height="20" Foreground="AliceBlue">Lorem ipsum dolor sit amet</TextBlock>
+                                </StackPanel>
+                            </Expander>
+                            
+                        </StackPanel>
+                    </Border>
+
+
+                    <Canvas DockPanel.Dock="Left"/>
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="YAML File" Width="100">
+
+            </TabItem>
+
+        </TabControl>
     </Grid>
+
 </Window>
