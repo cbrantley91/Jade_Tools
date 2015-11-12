@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Diagnostics;
 
 namespace Jade.MapView_WindowsGL
 {
@@ -88,7 +89,7 @@ namespace Jade.MapView_WindowsGL
             //StupidDrawLine(device, start, end);
 
             // TODO : Determine what logging framework should be used for MonoGame
-            System.Console.WriteLine("Update : " + gameTime.TotalGameTime.ToString());
+            System.Console.WriteLine("Update : " + gameTime.ElapsedGameTime.ToString() + ", " + gameTime.TotalGameTime.ToString());
 
             // Change base?
             //base.Draw(gameTime);
@@ -135,12 +136,31 @@ namespace Jade.MapView_WindowsGL
             );
         }
 
-        private GameTime time = new GameTime();
+        // TODO : move to subclass
+        private Stopwatch stopwatch = new Stopwatch();
+        private long lastMillis;
+
+        private void Start() {
+            lastMillis = stopwatch.ElapsedMilliseconds;
+            stopwatch.Start();
+        }
+
+        private GameTime CalculateGameTime() {
+            stopwatch.Stop();
+            long currentTime = stopwatch.ElapsedMilliseconds;
+            stopwatch.Start();
+
+            GameTime gameTime = new GameTime(TimeSpan.FromMilliseconds(currentTime),
+                TimeSpan.FromMilliseconds(currentTime - lastMillis));
+            lastMillis = currentTime;
+
+            return gameTime;
+        }
 
         // TODO : remove
         public void Draw(GraphicsDevice device)
         {
-            Draw(time, device);
+            Draw(CalculateGameTime(), device);
         }
     }
 }
