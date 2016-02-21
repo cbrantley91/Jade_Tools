@@ -23,13 +23,6 @@ namespace Jade.MapEditor_Windows
     /// </summary>
     public class MonoGameImageSource : IDisposable
     {
-        // the render target we draw to
-        private RenderTarget2D renderTarget;
-
-        // a WriteableBitmap we copy the pixels into for 
-        // display into the Image
-        private WriteableBitmap writeableBitmap;
-
         // a buffer array that gets the data from the render target
         private byte[] buffer;
 
@@ -37,18 +30,14 @@ namespace Jade.MapEditor_Windows
         /// Gets the render target used for this image source.
         /// </summary>
         public RenderTarget2D RenderTarget
-        {
-            get { return renderTarget; }
-        }
+        { get; private set; }
 
         /// <summary>
         /// Gets the underlying WriteableBitmap that can 
         /// be bound as an ImageSource.
         /// </summary>
         public WriteableBitmap WriteableBitmap
-        {
-            get { return writeableBitmap; }
-        }
+        { get; private set; }
 
         /// <summary>
         /// Creates a new XnaImageSource.
@@ -59,13 +48,10 @@ namespace Jade.MapEditor_Windows
         public MonoGameImageSource(GraphicsDevice graphics, int width, int height)
         {
             // create the render target and buffer to hold the data
-            renderTarget = new RenderTarget2D(
-                graphics, width, height, false,
-                SurfaceFormat.Color,
-                DepthFormat.Depth24Stencil8);
+            RenderTarget = new RenderTarget2D(graphics, width, height, false,
+                SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
             buffer = new byte[width * height * 4];
-            writeableBitmap = new WriteableBitmap(
-                width, height, 96, 96,
+            WriteableBitmap = new WriteableBitmap(width, height, 96, 96,
                 PixelFormats.Bgra32, null);
         }
 
@@ -81,7 +67,8 @@ namespace Jade.MapEditor_Windows
 
         protected virtual void Dispose(bool disposing)
         {
-            renderTarget.Dispose();
+            var renderTarget = RenderTarget;
+            if (renderTarget != null) renderTarget.Dispose();
 
             if (disposing)
                 GC.SuppressFinalize(this);
@@ -93,6 +80,13 @@ namespace Jade.MapEditor_Windows
         public void Commit()
         {
             // get the data from the render target
+            var renderTarget = RenderTarget;
+            var writeableBitmap = WriteableBitmap;
+
+            // TODO : do some logging
+            if (renderTarget == null || writeableBitmap == null)
+                return;
+
             renderTarget.GetData(buffer);
 
             // because the only 32 bit pixel format for WPF is 
