@@ -124,11 +124,12 @@ namespace Jade.MapView_WindowsGL
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) { 
                 pass.Apply();
                 DrawLines(device);
+                DrawTriangleStrip(device);
             }
                 
         }
 
-        VertexPositionColor[] pointList;
+        VertexPositionColor[] pointList, trianglePointList;
         int points = 8;
         VertexDeclaration vertexDeclaration = new VertexDeclaration(new VertexElement[]
                 {
@@ -155,6 +156,15 @@ namespace Jade.MapView_WindowsGL
                 new VertexPositionColor(new Vector3(-10, -20, 0), Color.CornflowerBlue)
             };
 
+            trianglePointList = new VertexPositionColor[]
+            {
+                new VertexPositionColor(new Vector3(0, 0, 0), Color.White),
+                new VertexPositionColor(new Vector3(200, 0, 0), Color.White),
+                new VertexPositionColor(new Vector3(200, 200, 0), Color.White),
+                new VertexPositionColor(new Vector3(0, 200, 0), Color.White),
+                new VertexPositionColor(new Vector3(0, 0, 0), Color.White),
+            };
+
             // Initialize the vertex buffer, allocating memory for each vertex.
             vertexBuffer = new VertexBuffer(GraphicsDevice, vertexDeclaration,
                 points, BufferUsage.None);
@@ -174,6 +184,15 @@ namespace Jade.MapView_WindowsGL
                 0,   // vertex buffer offset to add to each element of the index buffer
                 4    // number of vertices to draw
                 );
+        }
+
+        private void DrawTriangleStrip(GraphicsDevice device)
+        {
+            device.DrawUserPrimitives<VertexPositionColor>(
+                PrimitiveType.TriangleStrip,
+                trianglePointList,
+                0, 3
+            );
         }
 
     }
