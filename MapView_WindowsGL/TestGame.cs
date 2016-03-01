@@ -65,7 +65,11 @@ namespace Jade.MapView_WindowsGL
             {
                 Alpha = 1f,
                 VertexColorEnabled = true,
-                LightingEnabled = false
+                LightingEnabled = false,
+                Projection = Matrix.CreateOrthographicOffCenter
+                    (0, graphics.GraphicsDevice.Viewport.Width,     // left, right
+                    graphics.GraphicsDevice.Viewport.Height, 0,    // bottom, top
+                    0, 1)
             };
         }
 
@@ -113,50 +117,11 @@ namespace Jade.MapView_WindowsGL
 
         void StupidDrawLine(GraphicsDevice device, Vector2 start, Vector2 end)
         {
-            /*int points = 2;
-
-             VertexPositionColor[] primitiveList = new VertexPositionColor[points];
-
-            primitiveList[0] = new VertexPositionColor(new Vector3(start, 1), Color.White);
-            primitiveList[1] = new VertexPositionColor(new Vector3(end, 1), Color.White);*/
-
-            /*            Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 1.0f), Vector3.Zero, Vector3.Up);
-                        Matrix projectionMatrix = Matrix.CreateOrthographicOffCenter(
-                            0,
-                            (float) device.Viewport.Width,
-                            (float) device.Viewport.Height,
-                            0,
-                            1.0f, 1000.0f);
-                            */
-            /* short[] lineListIndices = new short[(points * 2) - 2];
-
-            for (int pt_ndx = 0; pt_ndx < points - 1; pt_ndx++)
-            {
-                lineListIndices[pt_ndx * 2] = (short)(pt_ndx);
-                lineListIndices[(pt_ndx * 2) + 1] = (short)(pt_ndx + 1);
-            } */
-
             device.RasterizerState = new RasterizerState()
             {
                 CullMode = CullMode.None,
                 FillMode = FillMode.WireFrame
         };
-
-            /*int points = 1;
-            int width = 10, height = 10;
-            var triangleListIndices = new short[18] { 0, 1, 2, 2, 1, 3, 2, 3, 4, 4, 3, 5, 4, 5, 6, 6, 5, 7 };
-
-            var primitiveList = new VertexPositionColor[points];
-
-            for (int x = 0; x < points / 2; x++)
-            {
-                for (int y = 0; y < 2; y++)
-                {
-                    primitiveList[(x * 2) + y] = new VertexPositionColor(
-                        new Vector3(x * 100, y * 100, 0), Color.White);
-                }
-            }
-            */
 
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) { 
                 pass.Apply();
@@ -181,16 +146,17 @@ namespace Jade.MapView_WindowsGL
         /// </summary>
         private void InitializePoints()
         {
-            pointList = new VertexPositionColor[points];
-
-            for (int x = 0; x < points / 2; x++)
+            pointList = new VertexPositionColor[]
             {
-                for (int y = 0; y < 2; y++)
-                {
-                    pointList[(x * 2) + y] = new VertexPositionColor(
-                        new Vector3(x * 100, y * 100, 0), Color.White);
-                }
-            }
+                new VertexPositionColor(new Vector3(100, 100, 0), Color.White),
+                new VertexPositionColor(new Vector3(200, 200, 0), Color.Red),
+                new VertexPositionColor(new Vector3(10, 5, 0), Color.Red),
+                new VertexPositionColor(new Vector3(5, -5, 0), Color.Beige),
+                new VertexPositionColor(new Vector3(20, 5, 0), Color.Aquamarine),
+                new VertexPositionColor(new Vector3(15, -5, 0), Color.Cyan),
+                new VertexPositionColor(new Vector3(20, 10, 0), Color.Cornsilk),
+                new VertexPositionColor(new Vector3(-10, -20, 0), Color.CornflowerBlue)
+            };
 
             // Initialize the vertex buffer, allocating memory for each vertex.
             vertexBuffer = new VertexBuffer(GraphicsDevice, vertexDeclaration,
@@ -230,15 +196,12 @@ namespace Jade.MapView_WindowsGL
         /// </summary>
         private void DrawTriangleList(GraphicsDevice device)
         {
-            device.DrawUserIndexedPrimitives<VertexPositionColor>(
-                PrimitiveType.TriangleList,
+            device.DrawUserPrimitives<VertexPositionColor>(
+                PrimitiveType.LineList,
                 pointList,
                 0,   // vertex buffer offset to add to each element of the index buffer
-                8,   // number of vertices to draw
-                triangleListIndices,
-                0,   // first index element to read
-                6    // number of primitives to draw
-            );
+                4    // number of vertices to draw
+                );
         }
 
     }
