@@ -46,8 +46,6 @@ namespace Jade.MapView_WindowsGL
             LoadShaders();
 
             InitializePoints();
-            InitializeTriangleList();
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -121,16 +119,15 @@ namespace Jade.MapView_WindowsGL
             {
                 CullMode = CullMode.None,
                 FillMode = FillMode.WireFrame
-        };
+            };
 
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) { 
                 pass.Apply();
-                DrawTriangleList(device);
+                DrawLines(device);
             }
                 
         }
 
-        short[] triangleListIndices;
         VertexPositionColor[] pointList;
         int points = 8;
         VertexDeclaration vertexDeclaration = new VertexDeclaration(new VertexElement[]
@@ -148,10 +145,10 @@ namespace Jade.MapView_WindowsGL
         {
             pointList = new VertexPositionColor[]
             {
-                new VertexPositionColor(new Vector3(100, 100, 0), Color.White),
-                new VertexPositionColor(new Vector3(200, 200, 0), Color.Red),
-                new VertexPositionColor(new Vector3(10, 5, 0), Color.Red),
-                new VertexPositionColor(new Vector3(5, -5, 0), Color.Beige),
+                new VertexPositionColor(new Vector3(0, 0, 0), Color.White),
+                new VertexPositionColor(new Vector3(400, 400, 0), Color.Red),
+                new VertexPositionColor(new Vector3(400, 400, 0), Color.Red),
+                new VertexPositionColor(new Vector3(400, 0, 0), Color.Beige),
                 new VertexPositionColor(new Vector3(20, 5, 0), Color.Aquamarine),
                 new VertexPositionColor(new Vector3(15, -5, 0), Color.Cyan),
                 new VertexPositionColor(new Vector3(20, 10, 0), Color.Cornsilk),
@@ -167,34 +164,9 @@ namespace Jade.MapView_WindowsGL
         }
 
         /// <summary>
-        /// Initializes the triangle list.
-        /// </summary>
-        private void InitializeTriangleList()
-        {
-            int width = 4;
-            int height = 2;
-
-            triangleListIndices = new short[(width - 1) * (height - 1) * 6];
-
-            for (int x = 0; x < width - 1; x++)
-            {
-                for (int y = 0; y < height - 1; y++)
-                {
-                    triangleListIndices[(x + y * (width - 1)) * 6] = (short)(2 * x);
-                    triangleListIndices[(x + y * (width - 1)) * 6 + 1] = (short)(2 * x + 1);
-                    triangleListIndices[(x + y * (width - 1)) * 6 + 2] = (short)(2 * x + 2);
-
-                    triangleListIndices[(x + y * (width - 1)) * 6 + 3] = (short)(2 * x + 2);
-                    triangleListIndices[(x + y * (width - 1)) * 6 + 4] = (short)(2 * x + 1);
-                    triangleListIndices[(x + y * (width - 1)) * 6 + 5] = (short)(2 * x + 3);
-                }
-            }
-        }
-
-        /// <summary>
         /// Draws the triangle list.
         /// </summary>
-        private void DrawTriangleList(GraphicsDevice device)
+        private void DrawLines(GraphicsDevice device)
         {
             device.DrawUserPrimitives<VertexPositionColor>(
                 PrimitiveType.LineList,
