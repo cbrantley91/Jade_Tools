@@ -102,15 +102,41 @@ namespace Jade.MapView_WindowsGL
             Vector2 start = new Vector2(10, 10);
             Vector2 end = new Vector2(100, 100);
 
-            device.Clear(Color.BlueViolet);
+            device.Clear(Color.Black);
 
-            StupidDrawLine(device, start, end);
+            PlotGridLines(0, 0, 400, 400, 1, 1);
 
             // TODO : Determine what logging framework should be used for MonoGame
             System.Console.WriteLine("Update : " + gameTime.ElapsedGameTime.ToString() + ", " + gameTime.TotalGameTime.ToString());
 
             // Change base?
             base.Draw(gameTime);
+        }
+
+        private VertexPositionColor[] PlotGridLines(float leftX, float topY, float rightX, float bottomY, int numHorizontalDivisisors, int numVerticalDivisors)
+        {
+            int minimumNumberOfPoints = 4, lineNdx = 0;
+            int numberOfPrimitives = minimumNumberOfPoints + numHorizontalDivisisors + numVerticalDivisors;
+            int numberOfHorizontalLines = minimumNumberOfPoints / 2 + numHorizontalDivisisors;
+            int numberOfVerticalLines = minimumNumberOfPoints / 2 + numVerticalDivisors;
+
+            VertexPositionColor[] pointList = new VertexPositionColor[numberOfPrimitives];
+
+            float deltaX = (rightX - leftX) / ((numHorizontalDivisisors + 1) * 1.0f);
+            for (int horizNdx = 0; horizNdx < numberOfHorizontalLines; horizNdx++)
+            {
+                pointList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, topY, 0), Color.Red);
+                pointList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, bottomY, 0), Color.Red);
+            }
+
+            float deltaY = (bottomY - topY) / ((numVerticalDivisors + 1) * 1.0f);
+            for (int vertNdx = 0; vertNdx < numberOfVerticalLines; vertNdx++)
+            {
+                pointList[lineNdx++] = new VertexPositionColor(new Vector3(leftX, topY + deltaY * vertNdx, 0), Color.Green);
+                pointList[lineNdx++] = new VertexPositionColor(new Vector3(rightX, topY + deltaY * vertNdx, 0), Color.Green);
+            }
+
+            return pointList;
         }
 
         void StupidDrawLine(GraphicsDevice device, Vector2 start, Vector2 end)
