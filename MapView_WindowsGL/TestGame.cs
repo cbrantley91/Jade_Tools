@@ -104,7 +104,7 @@ namespace Jade.MapView_WindowsGL
 
             device.Clear(Color.Black);
 
-            PlotGridLines(0, 0, 400, 400, 1, 1);
+
 
             // TODO : Determine what logging framework should be used for MonoGame
             System.Console.WriteLine("Update : " + gameTime.ElapsedGameTime.ToString() + ", " + gameTime.TotalGameTime.ToString());
@@ -115,28 +115,29 @@ namespace Jade.MapView_WindowsGL
 
         private VertexPositionColor[] PlotGridLines(float leftX, float topY, float rightX, float bottomY, int numHorizontalDivisisors, int numVerticalDivisors)
         {
-            int minimumNumberOfPoints = 4, lineNdx = 0;
-            int numberOfPrimitives = minimumNumberOfPoints + numHorizontalDivisisors + numVerticalDivisors;
-            int numberOfHorizontalLines = minimumNumberOfPoints / 2 + numHorizontalDivisisors;
-            int numberOfVerticalLines = minimumNumberOfPoints / 2 + numVerticalDivisors;
+            int minimumNumberOfLines = 4, lineNdx = 0;
+            int numberOfLines = minimumNumberOfLines + numHorizontalDivisisors + numVerticalDivisors;
+            int numberOfVertices = numberOfLines * 2;
+            int numberOfHorizontalLines = minimumNumberOfLines / 2 + numHorizontalDivisisors;
+            int numberOfVerticalLines = minimumNumberOfLines / 2 + numVerticalDivisors;
 
-            VertexPositionColor[] pointList = new VertexPositionColor[numberOfPrimitives];
+            VertexPositionColor[] vertexList = new VertexPositionColor[numberOfVertices];
 
             float deltaX = (rightX - leftX) / ((numHorizontalDivisisors + 1) * 1.0f);
             for (int horizNdx = 0; horizNdx < numberOfHorizontalLines; horizNdx++)
             {
-                pointList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, topY, 0), Color.Red);
-                pointList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, bottomY, 0), Color.Red);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, topY, 0), Color.Red);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, bottomY, 0), Color.Red);
             }
 
             float deltaY = (bottomY - topY) / ((numVerticalDivisors + 1) * 1.0f);
             for (int vertNdx = 0; vertNdx < numberOfVerticalLines; vertNdx++)
             {
-                pointList[lineNdx++] = new VertexPositionColor(new Vector3(leftX, topY + deltaY * vertNdx, 0), Color.Green);
-                pointList[lineNdx++] = new VertexPositionColor(new Vector3(rightX, topY + deltaY * vertNdx, 0), Color.Green);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX, topY + deltaY * vertNdx, 0), Color.Green);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(rightX, topY + deltaY * vertNdx, 0), Color.Green);
             }
 
-            return pointList;
+            return vertexList;
         }
 
         void StupidDrawLine(GraphicsDevice device, Vector2 start, Vector2 end)
@@ -149,13 +150,12 @@ namespace Jade.MapView_WindowsGL
 
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) { 
                 pass.Apply();
-                DrawLines(device);
-                DrawTriangleStrip(device);
+                DrawGridLines(device);
             }
                 
         }
 
-        VertexPositionColor[] pointList, trianglePointList;
+        VertexPositionColor[] pointList, trianglePointList, gridLines;
         int points = 8;
         VertexDeclaration vertexDeclaration = new VertexDeclaration(new VertexElement[]
                 {
@@ -191,6 +191,8 @@ namespace Jade.MapView_WindowsGL
                 new VertexPositionColor(new Vector3(0, 0, 0), Color.White),
             };
 
+            gridLines = PlotGridLines(0, 0, 400, 400, 1, 1);
+
             // Initialize the vertex buffer, allocating memory for each vertex.
             vertexBuffer = new VertexBuffer(GraphicsDevice, vertexDeclaration,
                 points, BufferUsage.None);
@@ -210,6 +212,11 @@ namespace Jade.MapView_WindowsGL
                 0,   // vertex buffer offset to add to each element of the index buffer
                 4    // number of vertices to draw
                 );
+        }
+
+        private void DrawGridLines(GraphicsDevice device)
+        {
+            device.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, gridLines, 0, gridLines.Length);
         }
 
         private void DrawTriangleStrip(GraphicsDevice device)
