@@ -104,7 +104,7 @@ namespace Jade.MapView_WindowsGL
 
             device.Clear(Color.Black);
 
-
+            StupidDrawLine(device, start, end);
 
             // TODO : Determine what logging framework should be used for MonoGame
             System.Console.WriteLine("Update : " + gameTime.ElapsedGameTime.ToString() + ", " + gameTime.TotalGameTime.ToString());
@@ -113,28 +113,28 @@ namespace Jade.MapView_WindowsGL
             base.Draw(gameTime);
         }
 
-        private VertexPositionColor[] PlotGridLines(float leftX, float topY, float rightX, float bottomY, int numHorizontalDivisisors, int numVerticalDivisors)
+        private VertexPositionColor[] PlotGridLines(float leftX, float topY, float rightX, float bottomY, int numHorizontalDivisors, int numVerticalDivisors)
         {
             int minimumNumberOfLines = 4, lineNdx = 0;
-            int numberOfLines = minimumNumberOfLines + numHorizontalDivisisors + numVerticalDivisors;
+            int numberOfLines = minimumNumberOfLines + numHorizontalDivisors + numVerticalDivisors;
             int numberOfVertices = numberOfLines * 2;
-            int numberOfHorizontalLines = minimumNumberOfLines / 2 + numHorizontalDivisisors;
             int numberOfVerticalLines = minimumNumberOfLines / 2 + numVerticalDivisors;
+            int numberOfHorizontalLines = minimumNumberOfLines / 2 + numHorizontalDivisors;
 
             VertexPositionColor[] vertexList = new VertexPositionColor[numberOfVertices];
 
-            float deltaX = (rightX - leftX) / ((numHorizontalDivisisors + 1) * 1.0f);
-            for (int horizNdx = 0; horizNdx < numberOfHorizontalLines; horizNdx++)
+            float deltaX = (rightX - leftX) / ((numVerticalDivisors + 1) * 1.0f);
+            for (int horizNdx = 0; horizNdx < numberOfVerticalLines; horizNdx++)
             {
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, topY, 0), Color.Red);
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, bottomY, 0), Color.Red);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, topY, 0), Color.White);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, bottomY, 0), Color.White);
             }
 
-            float deltaY = (bottomY - topY) / ((numVerticalDivisors + 1) * 1.0f);
-            for (int vertNdx = 0; vertNdx < numberOfVerticalLines; vertNdx++)
+            float deltaY = (bottomY - topY) / ((numHorizontalDivisors + 1) * 1.0f);
+            for (int vertNdx = 0; vertNdx < numberOfHorizontalLines; vertNdx++)
             {
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX, topY + deltaY * vertNdx, 0), Color.Green);
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(rightX, topY + deltaY * vertNdx, 0), Color.Green);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX, topY + deltaY * vertNdx, 0), Color.White);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(rightX, topY + deltaY * vertNdx, 0), Color.White);
             }
 
             return vertexList;
@@ -191,7 +191,7 @@ namespace Jade.MapView_WindowsGL
                 new VertexPositionColor(new Vector3(0, 0, 0), Color.White),
             };
 
-            gridLines = PlotGridLines(0, 0, 400, 400, 1, 1);
+            gridLines = PlotGridLines(100, 100, 700, 400, 4, 10);
 
             // Initialize the vertex buffer, allocating memory for each vertex.
             vertexBuffer = new VertexBuffer(GraphicsDevice, vertexDeclaration,
@@ -216,7 +216,7 @@ namespace Jade.MapView_WindowsGL
 
         private void DrawGridLines(GraphicsDevice device)
         {
-            device.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, gridLines, 0, gridLines.Length);
+            device.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, gridLines, 0, gridLines.Length / 2);
         }
 
         private void DrawTriangleStrip(GraphicsDevice device)
