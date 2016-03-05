@@ -113,6 +113,18 @@ namespace Jade.MapView_WindowsGL
             base.Draw(gameTime);
         }
 
+        private VertexPositionColor[] PlotGridLines(Vector2 topLeft, Vector2 bottomLeft, Vector2 topRight, int numHorizontalDivisors, int numVerticalDivisors)
+        {
+            return PlotGridLines(topLeft, bottomLeft, topRight, numHorizontalDivisors, numVerticalDivisors, Color.White, Color.White);
+        }
+
+        private VertexPositionColor[] PlotGridLines(Vector2 topLeft, Vector2 bottomLeft, Vector2 topRight, int numHorizontalDivisors, int numVerticalDivisors,
+            Color horizontalColor, Color verticalColor)
+        {
+            return new VertexPositionColor[0];
+        }
+
+        // TODO : move into a draw utility class
         private VertexPositionColor[] PlotGridLines(float leftX, float topY, float rightX, float bottomY, int numHorizontalDivisors, int numVerticalDivisors)
         {
             int minimumNumberOfLines = 4, lineNdx = 0;
