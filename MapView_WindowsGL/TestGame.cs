@@ -12,10 +12,19 @@ namespace Jade.MapView_WindowsGL
     /// </summary>
     public class TestGame : Game
     {
+        #region Fields
+
+        // TODO : cleanup unnecessary
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Effect basicEffect;
+        VertexPositionColor[] pointList, trianglePointList, gridLines;
+        VertexBuffer vertexBuffer;
+        int points = 8;
 
+        #endregion Fields
+
+        #region Lifecycle
         public TestGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -71,6 +80,10 @@ namespace Jade.MapView_WindowsGL
             };
         }
 
+        #endregion Lifecycle
+
+        #region Updates
+
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -86,6 +99,10 @@ namespace Jade.MapView_WindowsGL
 
             base.Update(gameTime);
         }
+
+        #endregion Updates
+
+        #region Drawing
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -113,38 +130,126 @@ namespace Jade.MapView_WindowsGL
             base.Draw(gameTime);
         }
 
-        private VertexPositionColor[] PlotGridLines(Vector2 topLeft, Vector2 bottomLeft, Vector2 topRight, int numHorizontalDivisors, int numVerticalDivisors)
+        private void DrawGridLines(GraphicsDevice device)
+        {
+            device.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, gridLines, 0, gridLines.Length / 2);
+        }
+
+        // TODO - cbrantley91 : remove
+        #region Test Draw Code
+
+        void StupidDrawLine(GraphicsDevice device, Vector2 start, Vector2 end)
+        {
+            device.RasterizerState = new RasterizerState()
+            {
+                CullMode = CullMode.None,
+                FillMode = FillMode.WireFrame
+            };
+
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                DrawGridLines(device);
+            }
+        }
+
+        /// <summary>
+        /// Draws the triangle list.
+        /// </summary>
+        private void DrawLines(GraphicsDevice device)
+        {
+            device.DrawUserPrimitives<VertexPositionColor>(
+                PrimitiveType.LineList,
+                pointList,
+                0,   // vertex buffer offset to add to each element of the index buffer
+                4    // number of vertices to draw
+                );
+        }
+
+        private void DrawTriangleStrip(GraphicsDevice device)
+        {
+            device.DrawUserPrimitives<VertexPositionColor>(
+                PrimitiveType.TriangleStrip,
+                trianglePointList,
+                0, 3
+            );
+        }
+
+        #endregion
+
+        #endregion Drawing
+
+        #region Plotting
+
+        #region Grid
+        private const int minimumNumberOfLinesForGrid = 4;
+
+        /// <summary>
+        /// Builds a line list representing a grid.  This function uses only 3 points to specify a grid, since it
+        /// assumes all lines to be parallel, and so dimensions are fixed.
+        /// </summary>
+        /// <param name="topLeft">The top-left point of the grid</param>
+        /// <param name="bottomLeft">The bottom-left point of the grid</param>
+        /// <param name="topRight">The top-right point of the grid</param>
+        /// <param name="numHorizontalDivisors">The number of dividing horizontal lines; this will result in (numHorizontalDivisors + 1) horizontal rows</param>
+        /// <param name="numVerticalDivisors">The number of dividing vertical lines; this will result in (numVerticalDivisors + 1) vertical columns</param>
+        /// <param name="horizontalColor">Color for horizontal lines</param>
+        /// <param name="verticalColor">Color for vertical lines</param>
+        /// <returns></returns>
+        protected VertexPositionColor[] PlotGridLines(Vector2 topLeft, Vector2 bottomLeft, Vector2 topRight,
+            int numHorizontalDivisors, int numVerticalDivisors)
         {
             return PlotGridLines(topLeft, bottomLeft, topRight, numHorizontalDivisors, numVerticalDivisors, Color.White, Color.White);
         }
 
-        private VertexPositionColor[] PlotGridLines(Vector2 topLeft, Vector2 bottomLeft, Vector2 topRight, int numHorizontalDivisors, int numVerticalDivisors,
-            Color horizontalColor, Color verticalColor)
+        /// <summary>
+        /// Builds a line list representing a grid.  This function uses only 3 points to specify a grid, since it
+        /// assumes all lines to be parallel, and so dimensions are fixed.
+        /// </summary>
+        /// <param name="topLeft">The top-left point of the grid</param>
+        /// <param name="bottomLeft">The bottom-left point of the grid</param>
+        /// <param name="topRight">The top-right point of the grid</param>
+        /// <param name="numHorizontalDivisors">The number of dividing horizontal lines; this will result in (numHorizontalDivisors + 1) horizontal rows</param>
+        /// <param name="numVerticalDivisors">The number of dividing vertical lines; this will result in (numVerticalDivisors + 1) vertical columns</param>
+        /// <param name="horizontalColor">Color for horizontal lines</param>
+        /// <param name="verticalColor">Color for vertical lines</param>
+        /// <returns></returns>
+        protected VertexPositionColor[] PlotGridLines(Vector2 topLeft, Vector2 bottomLeft, Vector2 topRight,
+            int numHorizontalDivisors, int numVerticalDivisors, Color horizontalColor, Color verticalColor)
         {
-            int minimumNumberOfLines = 4, lineNdx = 0;
-            int numberOfLines = minimumNumberOfLines + numHorizontalDivisors + numVerticalDivisors;
-            int numberOfVertices = numberOfLines * 2;
-            int numberOfVerticalLines = minimumNumberOfLines / 2 + numVerticalDivisors;
-            int numberOfHorizontalLines = minimumNumberOfLines / 2 + numHorizontalDivisors;
+            int numberOfLines = minimumNumberOfLinesForGrid + numHorizontalDivisors + numVerticalDivisors;
+            int numberOfVertices = numberOfLines * 2, lineNdx = 0;
+            int numberOfVerticalLines = minimumNumberOfLinesForGrid / 2 + numVerticalDivisors;
+            int numberOfHorizontalLines = minimumNumberOfLinesForGrid / 2 + numHorizontalDivisors;
 
             VertexPositionColor[] vertexList = new VertexPositionColor[numberOfVertices];
 
+            // deltaXVert is the space between the parallel vertical lines
+            // i.e., 2 dividing lines means the grid has been divided into 3 vertical columns, of deltaXVert width
             float deltaXVert = (topRight.X - topLeft.X) / ((numVerticalDivisors + 1) * 1.0f);
-            //float deltaYVert = (topRight.Y - topLeft.Y) / ((numberOfVerticalLines + 1) * 1.0f);
 
-            //float deltaXHoriz = (bottomLeft.X - topLeft.Y) / ((numberOfHorizontalLines + 1) * 1.0f);
+            // deltaYVert is the Y offset for the top of the vertical line, so a slant can be visible
+            // i.e., the first vertical line should stretch from (0,0) to (0,100), but the second should be (X,10) to (X,110)
+            float deltaYVert = (topRight.Y - topLeft.Y) / ((numVerticalDivisors + 1) * 1.0f);
+
+            // deltaXHoriz is similar to deltaYVert : specifies the horizontal offset, so the lines can slant
+            // i.e., the first horizontal line should stretch from (0,0) to (100,0), but the second should be (10,Y) to (110,Y)
+            float deltaXHoriz = (bottomLeft.X - topLeft.X) / ((numHorizontalDivisors + 1) * 1.0f);
+
+            // deltaYHoriz is the space between parallel horizontal lines
+            // i.e., 2 dividing lines means the grid has been divided into 3 horizontal rows, of deltaYHoriz width
             float deltaYHoriz = (bottomLeft.Y - topLeft.Y) / ((numHorizontalDivisors + 1) * 1.0f);
 
             for (int vertNdx = 0; vertNdx < numberOfVerticalLines; vertNdx++)
             {
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(topLeft.X + deltaXVert * vertNdx, topLeft.Y, 0), verticalColor);
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(bottomLeft.X + deltaXVert * vertNdx, bottomLeft.Y, 0), verticalColor);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(topLeft.X + deltaXVert * vertNdx, topLeft.Y + deltaYVert * vertNdx, 0), verticalColor);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(bottomLeft.X + deltaXVert * vertNdx, bottomLeft.Y + deltaYVert * vertNdx, 0), verticalColor);
             }
 
             for (int horizNdx = 0; horizNdx < numberOfHorizontalLines; horizNdx++)
             {
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(topLeft.X, topLeft.Y + deltaYHoriz * horizNdx, 0), horizontalColor);
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(topRight.X, topRight.Y + deltaYHoriz * horizNdx, 0), horizontalColor);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(topLeft.X + deltaXHoriz * horizNdx, topLeft.Y + deltaYHoriz * horizNdx, 0), horizontalColor);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(topRight.X + deltaXHoriz * horizNdx, topRight.Y + deltaYHoriz * horizNdx, 0), horizontalColor);
             }
 
             return vertexList;
@@ -178,30 +283,10 @@ namespace Jade.MapView_WindowsGL
             return vertexList;
         }
 
-        void StupidDrawLine(GraphicsDevice device, Vector2 start, Vector2 end)
-        {
-            device.RasterizerState = new RasterizerState()
-            {
-                CullMode = CullMode.None,
-                FillMode = FillMode.WireFrame
-            };
+        #endregion Grid
 
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes) { 
-                pass.Apply();
-                DrawGridLines(device);
-            }
-                
-        }
-
-        VertexPositionColor[] pointList, trianglePointList, gridLines;
-        int points = 8;
-        VertexDeclaration vertexDeclaration = new VertexDeclaration(new VertexElement[]
-                {
-                    new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                    new VertexElement(12, VertexElementFormat.Color, VertexElementUsage.Color, 0)
-                });
-
-        VertexBuffer vertexBuffer;
+        // TODO - cbrantley91 : Remove
+        #region Test Draw Code
 
         /// <summary>
         /// Initializes the point list.
@@ -229,7 +314,7 @@ namespace Jade.MapView_WindowsGL
                 new VertexPositionColor(new Vector3(0, 0, 0), Color.White),
             };
 
-            gridLines = PlotGridLines(new Vector2(0, 0), new Vector2(0, 400), new Vector2(400, 0), 4, 4, Color.Red, Color.Purple);
+            gridLines = PlotGridLines(new Vector2(80, 0), new Vector2(0, 400), new Vector2(400, 0), 6, 4, Color.Red, Color.Purple);
 
             // Initialize the vertex buffer, allocating memory for each vertex.
             vertexBuffer = new VertexBuffer(GraphicsDevice, vertexDeclaration,
@@ -239,32 +324,15 @@ namespace Jade.MapView_WindowsGL
             vertexBuffer.SetData<VertexPositionColor>(pointList);
         }
 
-        /// <summary>
-        /// Draws the triangle list.
-        /// </summary>
-        private void DrawLines(GraphicsDevice device)
-        {
-            device.DrawUserPrimitives<VertexPositionColor>(
-                PrimitiveType.LineList,
-                pointList,
-                0,   // vertex buffer offset to add to each element of the index buffer
-                4    // number of vertices to draw
-                );
-        }
+        VertexDeclaration vertexDeclaration = new VertexDeclaration(new VertexElement[]
+                {
+                    new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+                    new VertexElement(12, VertexElementFormat.Color, VertexElementUsage.Color, 0)
+                });
 
-        private void DrawGridLines(GraphicsDevice device)
-        {
-            device.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineList, gridLines, 0, gridLines.Length / 2);
-        }
+        #endregion
 
-        private void DrawTriangleStrip(GraphicsDevice device)
-        {
-            device.DrawUserPrimitives<VertexPositionColor>(
-                PrimitiveType.TriangleStrip,
-                trianglePointList,
-                0, 3
-            );
-        }
+        #endregion Plotting
 
     }
 }
