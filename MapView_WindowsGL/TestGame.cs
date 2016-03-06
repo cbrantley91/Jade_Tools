@@ -121,7 +121,33 @@ namespace Jade.MapView_WindowsGL
         private VertexPositionColor[] PlotGridLines(Vector2 topLeft, Vector2 bottomLeft, Vector2 topRight, int numHorizontalDivisors, int numVerticalDivisors,
             Color horizontalColor, Color verticalColor)
         {
-            return new VertexPositionColor[0];
+            int minimumNumberOfLines = 4, lineNdx = 0;
+            int numberOfLines = minimumNumberOfLines + numHorizontalDivisors + numVerticalDivisors;
+            int numberOfVertices = numberOfLines * 2;
+            int numberOfVerticalLines = minimumNumberOfLines / 2 + numVerticalDivisors;
+            int numberOfHorizontalLines = minimumNumberOfLines / 2 + numHorizontalDivisors;
+
+            VertexPositionColor[] vertexList = new VertexPositionColor[numberOfVertices];
+
+            float deltaXVert = (topRight.X - topLeft.X) / ((numVerticalDivisors + 1) * 1.0f);
+            //float deltaYVert = (topRight.Y - topLeft.Y) / ((numberOfVerticalLines + 1) * 1.0f);
+
+            //float deltaXHoriz = (bottomLeft.X - topLeft.Y) / ((numberOfHorizontalLines + 1) * 1.0f);
+            float deltaYHoriz = (bottomLeft.Y - topLeft.Y) / ((numHorizontalDivisors + 1) * 1.0f);
+
+            for (int vertNdx = 0; vertNdx < numberOfVerticalLines; vertNdx++)
+            {
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(topLeft.X + deltaXVert * vertNdx, topLeft.Y, 0), verticalColor);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(bottomLeft.X + deltaXVert * vertNdx, bottomLeft.Y, 0), verticalColor);
+            }
+
+            for (int horizNdx = 0; horizNdx < numberOfHorizontalLines; horizNdx++)
+            {
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(topLeft.X, topLeft.Y + deltaYHoriz * horizNdx, 0), horizontalColor);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(topRight.X, topRight.Y + deltaYHoriz * horizNdx, 0), horizontalColor);
+            }
+
+            return vertexList;
         }
 
         // TODO : move into a draw utility class
@@ -136,17 +162,17 @@ namespace Jade.MapView_WindowsGL
             VertexPositionColor[] vertexList = new VertexPositionColor[numberOfVertices];
 
             float deltaX = (rightX - leftX) / ((numVerticalDivisors + 1) * 1.0f);
-            for (int horizNdx = 0; horizNdx < numberOfVerticalLines; horizNdx++)
+            for (int vertNdx = 0; vertNdx < numberOfVerticalLines; vertNdx++)
             {
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, topY, 0), Color.White);
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * horizNdx, bottomY, 0), Color.White);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * vertNdx, topY, 0), Color.White);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX + deltaX * vertNdx, bottomY, 0), Color.White);
             }
 
             float deltaY = (bottomY - topY) / ((numHorizontalDivisors + 1) * 1.0f);
-            for (int vertNdx = 0; vertNdx < numberOfHorizontalLines; vertNdx++)
+            for (int horizNdx = 0; horizNdx < numberOfHorizontalLines; horizNdx++)
             {
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX, topY + deltaY * vertNdx, 0), Color.White);
-                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(rightX, topY + deltaY * vertNdx, 0), Color.White);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(leftX, topY + deltaY * horizNdx, 0), Color.White);
+                vertexList[lineNdx++] = new VertexPositionColor(new Vector3(rightX, topY + deltaY * horizNdx, 0), Color.White);
             }
 
             return vertexList;
@@ -203,7 +229,7 @@ namespace Jade.MapView_WindowsGL
                 new VertexPositionColor(new Vector3(0, 0, 0), Color.White),
             };
 
-            gridLines = PlotGridLines(100, 100, 700, 400, 4, 10);
+            gridLines = PlotGridLines(new Vector2(0, 0), new Vector2(0, 400), new Vector2(400, 0), 4, 4, Color.Red, Color.Purple);
 
             // Initialize the vertex buffer, allocating memory for each vertex.
             vertexBuffer = new VertexBuffer(GraphicsDevice, vertexDeclaration,
