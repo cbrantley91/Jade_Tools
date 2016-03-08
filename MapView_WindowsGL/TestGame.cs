@@ -20,6 +20,7 @@ namespace Jade.MapView_WindowsGL
         Effect basicEffect;
         VertexPositionColor[] pointList, trianglePointList, gridLines;
         VertexBuffer vertexBuffer;
+        MouseState mouseStateCurrent, mouseStatePrevious;
         int points = 8;
 
         #endregion Fields
@@ -40,6 +41,7 @@ namespace Jade.MapView_WindowsGL
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            this.IsMouseVisible = true;
 
             base.Initialize();
         }
@@ -95,7 +97,13 @@ namespace Jade.MapView_WindowsGL
              || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            mouseStateCurrent = Mouse.GetState();
+
+            // TODO : do mouse checking here
+
+            mouseStatePrevious = mouseStateCurrent;
+
+            // TODO: Add update logic here
 
             base.Update(gameTime);
         }
